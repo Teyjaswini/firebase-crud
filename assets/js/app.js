@@ -254,6 +254,44 @@ function onPostUpdate() {
         })
 }
 
+function onRemove(ele) {
+    let REMOVE_ID = ele.closest('.col-md-4').id
+    Swal.fire({
+        title: `Do you want to remove the post with id ${REMOVE_ID}?`,
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            spinner.classList.remove('d-none')
+
+            let REMOVE_URL = `${BASE_URL}/posts/${REMOVE_ID}.json`
+            fetch(REMOVE_URL, {
+                method: "DELETE",
+                body: null,
+                headers: {
+                    "auth": "Token from Local Storage"
+                }
+            })
+                .then(res => {
+                    if (res.ok) {
+                        return res.json()
+                    }
+                })
+                .then(data => {
+                    cl(data)
+                    ele.closest('.col-md-4').remove()
+                    snackbar(`The post with id ${REMOVE_ID} is removed successfully!!!`, 'success')
+                })
+                .catch(err => {
+                    snackbar(err)
+                })
+                .finally(() => {
+                    spinner.classList.add('d-none')
+                })
+        }
+    });
+
+}
 
 
 
